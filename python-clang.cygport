@@ -1,0 +1,41 @@
+SVN_URI="http://llvm.org/svn/llvm-project/cfe"
+SVN_BRANCH="tags/RELEASE_${PV//.}/final/bindings/python"
+SVN_MODULE="python-clang"
+inherit python2 python3 svn
+
+NAME="python-clang"
+VERSION=3.9.1
+RELEASE=2
+CATEGORY="Python"
+SUMMARY="Python bindings for Clang-C Source Indexing Library"
+DESCRIPTION="Clang is an LLVM native C/C++/ObjC compiler, which aims to deliver
+amazingly fast compiles, extremely useful error and warning messages and to
+provide a platform for building great source level tools."
+HOMEPAGE="http://clang.llvm.org/"
+
+PATCH_URI="3.7.1-cygwin-ctypes.patch"
+
+ARCH=noarch
+
+PKG_NAMES="python2-clang python3-clang"
+python2_clang_OBSOLETES="python-clang"
+python2_clang_REQUIRES="libclang3.9"	# ctypes
+python2_clang_DOCS="README.txt"
+python2_clang_CONTENTS="${PYTHON2_SITELIB#/}/clang/"
+python3_clang_REQUIRES="libclang3.9"	# ctypes
+python3_clang_DOCS="README.txt"
+python3_clang_CONTENTS="${PYTHON3_SITELIB#/}/clang/"
+
+src_compile() { :; }
+
+src_install() {
+	cd ${S}
+	python2into clang
+	dopython2 ${S}/clang/*.py
+	sed -i -e "s|\@CLANG_LIB_VERSION\@|${VERSION%.*}|" ${D}${PYTHON2_SITELIB}/clang/cindex.py
+
+	python3into clang
+	dopython3 ${S}/clang/*.py
+	sed -i -e "s|\@CLANG_LIB_VERSION\@|${VERSION%.*}|" ${D}${PYTHON3_SITELIB}/clang/cindex.py
+	2to3-${PYTHON3_VERSION} -n -w ${D}${PYTHON3_SITELIB}/clang/*.py
+}
