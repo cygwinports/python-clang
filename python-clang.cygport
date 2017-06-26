@@ -4,8 +4,8 @@ SVN_MODULE="python-clang"
 inherit python2 python3 svn
 
 NAME="python-clang"
-VERSION=3.9.1
-RELEASE=2
+VERSION=4.0.1
+RELEASE=1
 CATEGORY="Python"
 SUMMARY="Python bindings for Clang-C Source Indexing Library"
 DESCRIPTION="Clang is an LLVM native C/C++/ObjC compiler, which aims to deliver
@@ -19,10 +19,10 @@ ARCH=noarch
 
 PKG_NAMES="python2-clang python3-clang"
 python2_clang_OBSOLETES="python-clang"
-python2_clang_REQUIRES="libclang3.9"	# ctypes
+python2_clang_REQUIRES="libclang${VERSION%.*}"	# ctypes
 python2_clang_DOCS="README.txt"
 python2_clang_CONTENTS="${PYTHON2_SITELIB#/}/clang/"
-python3_clang_REQUIRES="libclang3.9"	# ctypes
+python3_clang_REQUIRES="libclang${VERSION%.*}"	# ctypes
 python3_clang_DOCS="README.txt"
 python3_clang_CONTENTS="${PYTHON3_SITELIB#/}/clang/"
 
