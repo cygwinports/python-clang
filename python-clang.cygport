@@ -4,7 +4,7 @@ SVN_MODULE="python-clang"
 inherit python2 python3 svn
 
 NAME="python-clang"
-VERSION=4.0.1
+VERSION=5.0.1
 RELEASE=1
 CATEGORY="Python"
 SUMMARY="Python bindings for Clang-C Source Indexing Library"
@@ -16,6 +16,8 @@ HOMEPAGE="http://clang.llvm.org/"
 PATCH_URI="3.7.1-cygwin-ctypes.patch"
 
 ARCH=noarch
+
+RESTRICT="postinst-doc"
 
 PKG_NAMES="python2-clang python3-clang"
 python2_clang_OBSOLETES="python-clang"
