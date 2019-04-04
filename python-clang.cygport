@@ -1,10 +1,10 @@
 SVN_URI="http://llvm.org/svn/llvm-project/cfe"
 SVN_BRANCH="tags/RELEASE_${PV//.}/final/bindings/python"
 SVN_MODULE="python-clang"
-inherit python2 python3 svn
+inherit python-wheel svn
 
 NAME="python-clang"
-VERSION=5.0.1
+VERSION=5.0.2
 RELEASE=1
 CATEGORY="Python"
 SUMMARY="Python bindings for Clang-C Source Indexing Library"
@@ -17,27 +17,21 @@ PATCH_URI="3.7.1-cygwin-ctypes.patch"
 
 ARCH=noarch
 
-RESTRICT="postinst-doc"
+python27_clang_REQUIRES="libclang${VERSION%.*}" # ctypes
+python36_clang_REQUIRES="libclang${VERSION%.*}" # ctypes
+python37_clang_REQUIRES="libclang${VERSION%.*}" # ctypes
 
-PKG_NAMES="python2-clang python3-clang"
-python2_clang_OBSOLETES="python-clang"
-python2_clang_REQUIRES="libclang${VERSION%.*}"	# ctypes
-python2_clang_DOCS="README.txt"
-python2_clang_CONTENTS="${PYTHON2_SITELIB#/}/clang/"
-python3_clang_REQUIRES="libclang${VERSION%.*}"	# ctypes
-python3_clang_DOCS="README.txt"
-python3_clang_CONTENTS="${PYTHON3_SITELIB#/}/clang/"
+CYGPORT_USE_UNSTABLE_API=1
+src_patch_hook() {
+	sed -i -e "s|\@CLANG_LIB_VERSION\@|${VERSION%.*}|" clang/cindex.py
+	cat > setup.py <<_EOF
+from setuptools import setup
 
-src_compile() { :; }
-
-src_install() {
-	cd ${S}
-	python2into clang
-	dopython2 ${S}/clang/*.py
-	sed -i -e "s|\@CLANG_LIB_VERSION\@|${VERSION%.*}|" ${D}${PYTHON2_SITELIB}/clang/cindex.py
-
-	python3into clang
-	dopython3 ${S}/clang/*.py
-	sed -i -e "s|\@CLANG_LIB_VERSION\@|${VERSION%.*}|" ${D}${PYTHON3_SITELIB}/clang/cindex.py
-	2to3-${PYTHON3_VERSION} -n -w ${D}${PYTHON3_SITELIB}/clang/*.py
+setup(name='clang',
+      version='${VERSION}',
+      platforms=['all'],
+      packages=['clang'],
+      use_2to3=True,
+      )
+_EOF
 }
